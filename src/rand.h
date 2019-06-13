@@ -24,9 +24,9 @@ uint8_t rand_byte(void);
 int rand_int(void);
 
 
-void entropy_init(void);
-uint8_t entropy_get_byte(void);
-void entropy_deinit(void);
+extern void entropy_init(void);
+extern uint8_t entropy_get_byte(void);
+extern void entropy_deinit(void);
 
 
 #if RAND_GENERATOR == RAND_GENERATOR_ENTROPY
