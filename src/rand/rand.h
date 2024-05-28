@@ -73,7 +73,7 @@ extern void entropy_deinit(void);
     #define RAND_INIT   rand_init_asg16
     #define RAND_BYTE   rand_byte_asg16
     #define RAND_INT    rand_int_frombyte
-#elif RAND_GENERATOR == RAND_GENERATOR_ENTROPIUM
+#elif RAND_GENERATOR == RAND_GENERATOR_ENTROPIUM && HAVE_CRYPTOLIB
     #define RAND_INIT   rand_init_entropium
     #define RAND_BYTE   rand_byte_entropium
     #define RAND_INT    rand_int_frombyte

@@ -1,0 +1,32 @@
+{
+    "name": "ebs-rand",
+    "version": "0.1.0",
+    "description": "Paseudo random number generation for constrained embedded systems",
+    "keywords": "ebs",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ebs-universe/piolib-rand"
+    },
+    "authors": {
+        "name": "Chintalagiri Shashank",
+        "email": "shashank.chintalagiri@gmail.com",
+        "url": "https://github.com/chintal",
+        "maintainer": true
+    },
+    "license": "LGPL-3.0-or-later",
+    "homepage": "https://ebs-universe.github.io/piolib-rand",
+    "frameworks": "*",
+    "platforms": "*",
+    "dependencies": [
+        { 
+            "owner": "chintal",
+            "name": "ebs-prbs",
+            "version": "^0.2.0"
+        },
+        { 
+            "owner": "chintal",
+            "name": "ebs-hal-uc",
+            "version": "^0.1.0"
+        }
+    ]
+  }

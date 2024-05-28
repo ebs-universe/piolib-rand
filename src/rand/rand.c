@@ -3,8 +3,10 @@
 #include "rand.h"
 #include <stdlib.h>
 #include <prbs/prbs.h>
-#include <crypto/entropium/entropium.h>
 
+#ifdef HAVE_CRYPTOLIB
+#include <cryptolib/entropium/entropium.h>
+#endif
 
 static inline void RAND_INIT(unsigned int * pool);
 static inline uint8_t RAND_BYTE(void);
@@ -180,7 +182,7 @@ static inline uint8_t rand_byte_asg64(void){
     return asg_lfsr64_cGetNextByte(&rk_asg64);
 }
 
-#elif RAND_GENERATOR == RAND_GENERATOR_ENTROPIUM
+#elif RAND_GENERATOR == RAND_GENERATOR_ENTROPIUM && HAVE_CRYPTOLIB
 
 static inline void rand_init_entropium(unsigned int * pool){
     entropium_addEntropy(RAND_ENTROPY_POOL_LENGTH * 16, (void *)pool);
