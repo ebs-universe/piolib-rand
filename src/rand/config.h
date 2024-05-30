@@ -14,12 +14,6 @@
     #define RAND_GENERATOR              RAND_GENERATOR_RAND
 #endif
 
-#ifdef EBS_RAND_ENTROPY_POOL_LENGTH
-    #define RAND_ENTROPY_POOL_LENGTH    EBS_RAND_ENTROPY_POOL_LENGTH
-#else
-    #define RAND_ENTROPY_POOL_LENGTH    10
-#endif
-
 #ifdef __has_include
 #  if __has_include (<cryptolib/config.h>)
 #    include <cryptolib/config.h>

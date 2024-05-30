@@ -3,33 +3,29 @@
 #include "rand.h"
 #include <stdlib.h>
 #include <prbs/prbs.h>
+#include <hal/uc.h>
+
 
 #ifdef HAVE_CRYPTOLIB
 #include <cryptolib/entropium/entropium.h>
 #endif
 
-static inline void RAND_INIT(unsigned int * pool);
+static inline void RAND_INIT(uint8_t * pool);
 static inline uint8_t RAND_BYTE(void);
 static inline int RAND_INT(void);
-int rand_int_frombyte(void);
+
+
 
 void rand_init(void){
-    uint8_t i, j;
-    unsigned int ent;
-    unsigned int pool[RAND_ENTROPY_POOL_LENGTH];
-    entropy_init();
-    for (i=0; i<RAND_ENTROPY_POOL_LENGTH; i++){
-        ent = 0;
-        for (j=0; j<__SIZEOF_INT__; j++){
-            ent = ent << 8;
-            ent = ent | entropy_get_byte();
-        }
-        pool[i] = ent;
+    uint8_t i;
+    uint8_t pool[RAND_POOL];
+    for (i=0; i<RAND_POOL; i++){
+        pool[i] = entropy_get_byte();
     }
-    RAND_INIT(&pool[0]);
-    entropy_deinit();
+    RAND_INIT((uint8_t *)&pool[0]);
 }
 
+int rand_int_frombyte(void);
 
 int rand_int_frombyte(void){
     int i = 0; 
@@ -50,20 +46,10 @@ int rand_int(void){
 }
 
 
-#if RAND_GENERATOR == RAND_GENERATOR_ENTROPY
+#if RAND_GENERATOR == RAND_GENERATOR_RAND
 
-static inline void rand_init_entropy(unsigned int * __attribute__((unused)) pool){
-    entropy_init();
-}
-    
-static inline uint8_t rand_byte_entropy(void){
-    return entropy_get_byte();
-}
-
-#elif RAND_GENERATOR == RAND_GENERATOR_RAND
-
-static inline void rand_init_rand(unsigned int * pool){
-    srand(*pool);
+static inline void rand_init_rand(uint8_t * pool){
+    srand(* (unsigned int *)pool);
 }
 
 static inline uint8_t rand_byte_rand(void){
@@ -78,7 +64,7 @@ static inline int rand_int_rand(void){
 
 static lfsr16_t rk_lfsr16;
 
-static inline void rand_init_lfsr16(unsigned int * pool){
+static inline void rand_init_lfsr16(uint8_t * pool){
     lfsr16_vAddEntropy(&rk_lfsr16, (void *)pool);
 }
     
@@ -90,7 +76,7 @@ static inline uint8_t rand_byte_lfsr16(void){
 
 static lfsr32_t rk_lfsr32;
 
-static inline void rand_init_lfsr32(unsigned int * pool){
+static inline void rand_init_lfsr32(uint8_t * pool){
     lfsr32_vAddEntropy(&rk_lfsr32, (void *)pool);
 }
     
@@ -102,7 +88,7 @@ static inline uint8_t rand_byte_lfsr32(void){
 
 static lfsr64_t rk_lfsr64;
 
-static inline void rand_init_lfsr64(unsigned int * pool){
+static inline void rand_init_lfsr64(uint8_t * pool){
     lfsr64_vAddEntropy(&rk_lfsr64, (void *)pool);
 }
     
@@ -114,7 +100,7 @@ static inline uint8_t rand_byte_lfsr64(void){
 
 static sg_lfsr16_t rk_sg16;
 
-static inline void rand_init_sg16(unsigned int * pool){
+static inline void rand_init_sg16(uint8_t * pool){
     sg_lfsr16_vAddEntropy(&rk_sg16, (void *)pool);
 }
     
@@ -126,7 +112,7 @@ static inline uint8_t rand_byte_sg16(void){
 
 static sg_lfsr32_t rk_sg32;
 
-static inline void rand_init_sg32(unsigned int * pool){
+static inline void rand_init_sg32(uint8_t * pool){
     sg_lfsr32_vAddEntropy(&rk_sg32, (void *)pool);
 }
     
@@ -138,7 +124,7 @@ static inline uint8_t rand_byte_sg32(void){
 
 static sg_lfsr64_t rk_sg64;
 
-static inline void rand_init_sg64(unsigned int * pool){
+static inline void rand_init_sg64(uint8_t * pool){
     sg_lfsr64_vAddEntropy(&rk_sg64, (void *)pool);
 }
     
@@ -150,7 +136,7 @@ static inline uint8_t rand_byte_sg64(void){
 
 static asg_lfsr16_t rk_asg16;
 
-static inline void rand_init_asg16(unsigned int * pool){
+static inline void rand_init_asg16(uint8_t * pool){
     asg_lfsr16_vAddEntropy(&rk_asg16, (void *)pool);
 }
     
@@ -162,7 +148,7 @@ static inline uint8_t rand_byte_asg16(void){
 
 static asg_lfsr32_t rk_asg32;
 
-static inline void rand_init_asg32(unsigned int * pool){
+static inline void rand_init_asg32(uint8_t * pool){
     asg_lfsr32_vAddEntropy(&rk_asg32, (void *)pool);
 }
     
@@ -174,7 +160,7 @@ static inline uint8_t rand_byte_asg32(void){
 
 static asg_lfsr64_t rk_asg64;
 
-static inline void rand_init_asg64(unsigned int * pool){
+static inline void rand_init_asg64(uint8_t * pool){
     asg_lfsr64_vAddEntropy(&rk_asg64, (void *)pool);
 }
     
@@ -184,8 +170,8 @@ static inline uint8_t rand_byte_asg64(void){
 
 #elif RAND_GENERATOR == RAND_GENERATOR_ENTROPIUM && HAVE_CRYPTOLIB
 
-static inline void rand_init_entropium(unsigned int * pool){
-    entropium_addEntropy(RAND_ENTROPY_POOL_LENGTH * 16, (void *)pool);
+static inline void rand_init_entropium(uint8_t * pool){
+    entropium_addEntropy(RAND_ENTROPY_POOL_LENGTH * 8, (void *)pool);
 }
     
 static inline uint8_t rand_byte_entropium(void){
